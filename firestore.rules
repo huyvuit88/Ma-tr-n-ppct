@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email != null &&
+        (request.auth.token.email.lower() == 'dvtrong.spdt09@gmail.com' ||
+         request.auth.token.email.lower() == 'dvtrong.c23hoabinh.dtp@moet.edu.vn' ||
+         request.auth.token.email.lower() == 'duongvantrong.dtp@gmail.com' ||
+         request.auth.token.email.lower() == 'huyvuit88@gmail.com');
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // User profile
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOwner(userId) || isSuperAdmin();
+      allow delete: if isSuperAdmin();
+
+      // Synchronized GVCN Class Data
+      match /gvcn_data/{docId} {
+        allow read, write: if isOwner(userId) || isSuperAdmin();
+      }
+
+      // Synchronized Teaching Materials, PPCT Datasets & Exam Matrices
+      match /ppct_data/{docId} {
+        allow read, write: if isOwner(userId) || isSuperAdmin();
+      }
+
+      // Synchronized Uploaded Question Bank
+      match /question_bank/{docId} {
+        allow read, write: if isOwner(userId) || isSuperAdmin();
+      }
+    }
+
+    // Whitelist collection for authorized emails
+    match /whitelist_users/{emailId} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+  }
+}

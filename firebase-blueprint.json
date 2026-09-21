@@ -1,0 +1,104 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "User profile information and role",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "lastLoginAt": { "type": "string" }
+      },
+      "required": ["email"]
+    },
+    "GvcnClassData": {
+      "title": "GVCN Class Data",
+      "description": "Class info, students list, seating chart, and evaluation data for a teacher",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "ownerEmail": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "classInfo": { "type": "object" },
+        "students": { "type": "array" },
+        "weeklyRecords": { "type": "array" },
+        "rules": { "type": "array" },
+        "seatingChart": { "type": "object" },
+        "specialStudents": { "type": "array" },
+        "parentContacts": { "type": "array" },
+        "monthlyTasks": { "type": "array" }
+      },
+      "required": ["ownerId", "updatedAt"]
+    },
+    "TeacherAppData": {
+      "title": "Teacher App Data",
+      "description": "Synchronized teaching materials, uploaded PPCT datasets, textbook links, timeframe, and exam matrices across devices",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "ownerEmail": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "datasets": { "type": "array" },
+        "activeDatasetId": { "type": "string" },
+        "timeframeConfig": { "type": "object" },
+        "matrixConfig": { "type": "object" },
+        "matrixRows": { "type": "array" },
+        "sgkBooks": { "type": "array" },
+        "sourceDevice": { "type": "string" },
+        "uploadedQuestions": { "type": "array" }
+      },
+      "required": ["ownerId", "updatedAt"]
+    },
+    "QuestionBankData": {
+      "title": "Question Bank Data",
+      "description": "Teacher uploaded questions categorized by grade and cognitive level for AI assisted exam creation",
+      "type": "object",
+      "properties": {
+        "ownerId": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "questions": { "type": "array" },
+        "gradeStats": { "type": "object" },
+        "totalCount": { "type": "number" }
+      },
+      "required": ["ownerId", "updatedAt"]
+    },
+    "WhitelistUser": {
+      "title": "Whitelist User",
+      "description": "Authorized email address allowed to access the application",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "addedBy": { "type": "string" },
+        "addedAt": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["email"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document"
+    },
+    "/users/{userId}/gvcn_data/{docId}": {
+      "schema": "GvcnClassData",
+      "description": "Teacher synchronized class data"
+    },
+    "/users/{userId}/ppct_data/{docId}": {
+      "schema": "TeacherAppData",
+      "description": "Teacher synchronized curriculum datasets, PPCT materials, and matrix data"
+    },
+    "/users/{userId}/question_bank/{docId}": {
+      "schema": "QuestionBankData",
+      "description": "Teacher synchronized reference question bank categorized by grade"
+    },
+    "/whitelist_users/{emailId}": {
+      "schema": "WhitelistUser",
+      "description": "Authorized email list document"
+    }
+  }
+}
